@@ -1,6 +1,8 @@
 # DiffusICE
 A work in project implementation of Score SDE Diffusion following the Karras EDM framework, intended for use internally at the Norwegian Meteorological Institute. The software is provided as is.
 
+![Static Badge](https://img.shields.io/badge/version-0.0.1--alpha-blue)
+
 # Model architecture
 DiffusICE is provided as a set of diffusion model backbones, and wrappers that perform basic EDM functionality (noise sampling, preconditioning, denoising) and Inference sampling (Heuns stochastic 2nd order). The provided functions are intended  for constructing [Pytorch Lightning](https://lightning.ai/docs/pytorch/stable/index.html) modules, but this is not strictly required. Example LightningModules are provided in the deterministic variants of the underlying architectures. A Diffusion example is provided in the **examples/** directory.
 
