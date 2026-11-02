@@ -7,6 +7,7 @@ import torch
 import lightning.pytorch as L
 
 from torch.nn import functional as F
+from diffusice.samplers import HeunStochasticSampler
 from diffusice.backbone.unet_backbone_sde import UNETbackbone
 from diffusice.edm import sample_sigma, precondition, loss_weight, denoise
 
@@ -94,3 +95,28 @@ class LitDiffusionEDM(L.LightningModule):
 
     def on_train_batch_end(self, outputs, batch, batch_idx):
         self.ema.update_parameters(self.backbone)
+
+
+    def _make_denoiser(self):
+        def denoiser_fn(z, t):
+            c_skip, c_out, c_in, c_noise = precondition(t, torch.log(t).unsqueeze(0), self.sigma_data)
+
+            z_in = c_in.view(-1, *([1]*(z.ndim-1))) * z
+            D = denoise(self.backbone, z_in, z, c_noise, c_skip, c_out, z.ndim - 1)
+
+            return D
+
+        return denoiser_fn
+    
+
+    def generate_samples(self, batch_size, device, n_inference_steps = 40):  
+        sampler = HeunStochasticSampler()
+
+        denoiser_fn = self._make_denoiser()
+
+        time_steps, gamma = sampler.setup_schedule(n_inference_steps, device)
+
+        z = torch.randn(batch_size, 3, 160, 160, device = device) * time_steps[0]
+
+        return sampler.step(z, denoiser_fn, time_steps, gamma, n_inference_steps)
+    

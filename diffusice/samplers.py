@@ -51,10 +51,6 @@ class HeunStochasticSampler(BaseSampler):
 
             D_out = denoiser_fn(z_hat_i, t_hat_i)
 
-            # Dynamic thresholding (Saharia 2022)
-            # s = torch.quantile(D_out.reshape(b, c, -1), q = torch.tensor([0.005, 0.995], device = z.device), dim = -1)
-            # D_out = torch.clamp(D_out, min = s[0].unsqueeze(-1).unsqueeze(-1), max = s[1].unsqueeze(-1).unsqueeze(-1))
-
             scale_factor = 1. / t_hat_i
             dxdt = scale_factor * (z_hat_i - D_out)
 
@@ -66,10 +62,6 @@ class HeunStochasticSampler(BaseSampler):
             if time_steps[i+1] != 0:
                 D_out_step = denoiser_fn(z_step, time_steps[i+1])
     
-                # Dynamic thresholding (Saharia 2022)
-                # s_step = torch.quantile(D_out_step.reshape(b, c, -1), q = torch.tensor([0.005, 0.995], device = z.device), dim = -1)
-                # D_out_step = torch.clamp(D_out_step, min = s_step[0].unsqueeze(-1).unsqueeze(-1), max = s_step[1].unsqueeze(-1).unsqueeze(-1))
-
                 scale_factor_step = 1. / time_steps[i+1]
 
                 dxdt_step = scale_factor_step * (z_step - D_out_step)

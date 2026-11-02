@@ -1,11 +1,19 @@
 import torch
 import os
+import csv
 import lightning.pytorch as L
 
 from math import sqrt
 
 from WoofLoader import WoofLoader
 from LitDiffusionUnet import LitDiffusionEDM
+
+def config_writer(config_path, config):
+    with open(f"{config_path}/{config['model_name']}.csv", "w") as config_out:
+        w = csv.DictWriter(config_out, config.keys())
+        w.writeheader()
+        w.writerow(config)
+
 
 def get_default_config():
     return {
@@ -50,7 +58,7 @@ def get_default_config():
 def main():
     torch.set_float32_matmul_precision("high")
 
-    dev_run = False
+    dev_run = True
 
     config = get_default_config()
 
@@ -85,6 +93,8 @@ def main():
         strategy = "ddp_find_unused_parameters_true",
         callbacks = callbacks
     )
+
+    config_writer("/lustre/storeB/project/metkl/DigitalSeaIce/are-phd/DiffusICE/examples/imagewoof/outputs/configs", config)
 
     trainer.fit(model, train_dataloader)
 
