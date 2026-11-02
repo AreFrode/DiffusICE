@@ -221,3 +221,4 @@ __marimo__/
 examples/imagewoof/lightning_logs/
 examples/imagewoof/imagewoof2-160/
 *.png
+*.csv
