@@ -220,3 +220,4 @@ __marimo__/
 # Lightning logs
 examples/imagewoof/lightning_logs/
 examples/imagewoof/imagewoof2-160/
+*.png
