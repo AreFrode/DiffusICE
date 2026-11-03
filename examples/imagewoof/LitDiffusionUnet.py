@@ -102,7 +102,7 @@ class LitDiffusionEDM(L.LightningModule):
             c_skip, c_out, c_in, c_noise = precondition(t, torch.log(t).unsqueeze(0), self.sigma_data)
 
             z_in = c_in.view(-1, *([1]*(z.ndim-1))) * z
-            D = denoise(self.backbone, z_in, z, c_noise, c_skip, c_out, z.ndim - 1)
+            D = denoise(self.ema, z_in, z, c_noise, c_skip, c_out, z.ndim - 1)
 
             return D
 
