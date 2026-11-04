@@ -42,12 +42,14 @@ class HeunStochasticSampler(BaseSampler):
         return time_steps, gamma
     
     def step(self, z, denoiser_fn, time_steps, gamma, N, step_callback = None):
-        b, c, h, w = z.size()
         z_step = z
         for i in tqdm(range(N), leave = False):
             eps_i = torch.randn_like(z) * self.S_noise
+
             t_hat_i = time_steps[i] * (1 + gamma[i])
-            z_hat_i = z + torch.sqrt((t_hat_i ** 2) - (time_steps[i] ** 2)) * eps_i
+            noise_mag = torch.sqrt((t_hat_i ** 2) - time_steps[i] ** 2)
+
+            z_hat_i = z + noise_mag * eps_i
 
             D_out = denoiser_fn(z_hat_i, t_hat_i)
 
