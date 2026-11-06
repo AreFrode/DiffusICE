@@ -78,7 +78,7 @@ def main():
     model = LitDiffusionEDM(
         config = config
     )
-    
+
     callbacks = [L.callbacks.TQDMProgressBar()]
 
 
@@ -94,7 +94,7 @@ def main():
         callbacks = callbacks
     )
 
-    config_writer("/lustre/storeB/project/metkl/DigitalSeaIce/are-phd/DiffusICE/examples/imagewoof/outputs/configs", config)
+    config_writer("outputs/configs", config)
 
     trainer.fit(model, train_dataloader)
 
